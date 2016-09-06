@@ -1,0 +1,95 @@
+from builtins import dict
+from builtins import super
+from builtins import str
+
+import json
+import sys
+import requests
+
+from .data import Data_point
+from .slots import forecast_slots
+
+
+class Forecast(Data_point):
+    __slots__ = forecast_slots
+
+    def __init__(self, api_key, latitude, longitude, **options):
+        self.latitude = latitude
+        self.longitude = longitude
+        self.api_key = api_key
+        self._options = options
+        self.refresh()
+
+    def __setattr__(self, name, value):
+        if name in ['_data', 'api_key', '_options', 'latitude', 'longitude']:
+            return object.__setattr__(self, name, value)
+        return super().__setattr__(name, value)
+
+    def __getattr__(self, name):
+        # TODO: code-cleanup
+        if name not in ['_data', '_options']:
+            if name in self()['currently'].keys():
+                return self()['currently'][name]
+            return object.__getattribute__(self, name)
+        return self.__getattribute__(name)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, tb):
+        del self
+
+    def refresh(self, options=None, **kwoptions):
+        if options is not None:
+            # replace current settings with new ones
+            self._options = options
+
+        # update current options
+        self._options = dict(self._options, **kwoptions)
+
+        # overwrite basic mandatory attributes with new values
+        for key in ('api_key', 'latitude', 'longitude'):
+            if key in self._options.keys():
+                exec('self.{}={}'.format(key, self._options[key]))
+
+        super().__init__(json.loads(self._request()))
+
+    def _build_url(self):
+        # set mandatory settings
+        key, lat, lng = (self.api_key, str(self.latitude), str(self.longitude))
+        url = 'https://api.forecast.io/forecast/'
+        url += key + '/' + lat + ',' + lng
+        if not self._options:
+            return url
+
+        # time machine request
+        if 'time' in self._options.keys():
+            url += ',' + self._options.pop('time')
+
+        # add optional query parameters
+        url += '?'
+        for key, value in self._options.items():
+            url += key + '=' + str(value) + '&'
+        return url
+
+    def _request(self):
+        try:
+            response = requests.get(self._build_url())
+        except requests.exceptions.Timeout:
+            print('Error: Timeout')
+        except requests.exceptions.TooManyRedirects:
+            print('Error: TooManyRedirects')
+        except requests.exceptions.RequestException as ex:
+            print(ex)
+            sys.exit(1)
+        try:
+            cache_control = response.headers['Cache-Control']
+            expires = response.headers['Expires']
+            x_forecast_api_calls = response.headers['X-Forecast-API-Calls']
+            x_responde_time = response.headers['X-Response-Time']
+        except KeyError as kerr:
+            msg = 'Warning: Could not get headers. ' + str(kerr)
+            print(msg)
+        if response.status_code is not 200:
+            raise requests.exceptions.HTTPError('Bad response')
+        return response.text

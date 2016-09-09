@@ -63,11 +63,11 @@ class Flags(Data_point):
         return object.__setattr__(self, name, value)
 
     def __str__(self):
-        return str(self.raw)
+        return str(self())
 
 
 class Alerts(Data_point):
     __slots__ = alerts_slots
 
     def __str__(self):
-        return str(self.raw)
+        return str(self())

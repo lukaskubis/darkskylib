@@ -3,18 +3,16 @@
 
 ![In action](http://i.imgur.com/XfJ82jV.gif)
 
-Python wrapper for the [forecast.io](http://www.forecast.io) [API](https://developer.forecast.io).
+Python wrapper for the [The Dark Sky Forecast API](https://developer.forecast.io/docs/v2). This library provides access to detailed weather information from around the globe.
 
-This library provides access to detailed weather information from around the globe, using [The Dark Sky Forecast API](https://developer.forecast.io/docs/v2). Works with both versions of python.
-
-* [Quick start](https://github.com/lukaskubis/forepycast#quick-start)
-  * [Installation](https://github.com/lukaskubis/forepycast#installation)
-  * [API Calls](https://github.com/lukaskubis/forepycast#api-calls)
-  * [Data Points and Data Blocks](https://github.com/lukaskubis/forepycast#data-points-and-data-blocks)
-  * [Flags and Alerts](https://github.com/lukaskubis/forepycast#flags-and-alerts)
-  * [Updating data](https://github.com/lukaskubis/forepycast#updating-data)
-* [TODOs](https://github.com/lukaskubis/forepycast#todos-before-v02)
-* [License](https://raw.githubusercontent.com/lukaskubis/forepycastio/master/LICENSE)
+* [Quick start](#quick-start)
+  * [Installation](#installation)
+  * [API Calls](#api-calls)
+  * [Data Points and Data Blocks](#data-points-and-data-blocks)
+  * [Flags and Alerts](#flags-and-alerts)
+  * [Updating data](#updating-data)
+* [TODOs](#todos-before-v02)
+* [License](#license)
 
 ## Quick start
 Before you start using this library, you need to get your API key [here](https://developer.forecast.io).
@@ -120,7 +118,7 @@ Use `refresh` method to update data of a `Forecast` object. You can update any r
 [![Issues](https://img.shields.io/github/issues/lukaskubis/forepycast.svg)](https://github.com/lukaskubis/forepycast/issues)
 - [ ] docs & docstrings
 - [ ] unit tests
-- [ ] improve refreshing of mandatory parameters
+- [x] ~~improve refreshing of mandatory parameters~~
 - [x] ~~improve handling forecast attributes when setting values~~
 
 ## License

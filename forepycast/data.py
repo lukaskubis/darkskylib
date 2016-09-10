@@ -9,25 +9,26 @@ class Data_point(object):
 
     def __init__(self, data):
         self._data = data
-        for name, value in self().items():
-            setattr(self, name, value)
+        for name, val in self().items():
+            setattr(self, name, val)
 
     def __call__(self):
         return self._data
 
-    def __setattr__(self, name, value):
-        def setvalue(new_val=None):
-            return object.__setattr__(self, name, new_val if new_val else value)
+    def __setattr__(self, name, val):
+        def setval(new_val=None):
+            return object.__setattr__(self, name, new_val if new_val else val)
 
         # regular value
-        if not isinstance(value, dict) or name == '_data':
-            return setvalue()
+        if not isinstance(val, dict) or name == '_data':
+            return setval()
 
-        # set data handlers
+        # set specific data handlers
         if name in ['alerts', 'flags']:
-            return setvalue(eval(name.capitalize())(value))
-        data_block = 'data' in value.keys()
-        return setvalue(Data_block(value) if data_block else Data_point(value))
+            return setval(eval(name.capitalize())(val))
+
+        # set general data handlers
+        setval(Data_block(val) if 'data' in val.keys() else Data_point(val))
 
     def __getattr__(self, name):
         if name not in self.__slots__:
@@ -38,7 +39,7 @@ class Data_block(Data_point):
     __slots__ = data_block_slots
 
     def __call__(self, index=None):
-        return self()['data'].__getitem__(index) if index else super().__call__()
+        return self.__getitem__(index) if index else super().__call__()
 
     def __setattr__(self, name, value):
         if name == 'data':

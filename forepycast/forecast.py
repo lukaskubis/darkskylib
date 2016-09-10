@@ -26,12 +26,9 @@ class Forecast(Data_point):
         return super().__setattr__(name, value)
 
     def __getattr__(self, name):
-        # TODO: code-cleanup
-        if name not in ['_data', '_options']:
-            if name in self()['currently'].keys():
-                return self()['currently'][name]
-            return object.__getattribute__(self, name)
-        return self.__getattribute__(name)
+        if name in self()['currently'].keys():
+            return self()['currently'][name]
+        return object.__getattribute__(self, name)
 
     def __enter__(self):
         return self
@@ -40,25 +37,25 @@ class Forecast(Data_point):
         del self
 
     def refresh(self, options=None, **kwoptions):
+        # replace current settings with new ones
         if options is not None:
-            # replace current settings with new ones
             self._options = options
 
-        # update current options
+        # update current forecast options (if any)
         self._options = dict(self._options, **kwoptions)
 
-        # overwrite basic mandatory attributes with new values
-        for key in ('api_key', 'latitude', 'longitude'):
-            if key in self._options.keys():
-                exec('self.{}={}'.format(key, self._options[key]))
+        # overwrite basic mandatory attributes with new values if provided
+        self.api_key = self._options.pop('api_key', self.api_key)
+        self.latitude = self._options.pop('latitude', self.latitude)
+        self.longitude = self._options.pop('longitude', self.longitude)
 
+        # request data from API and store it in new attributes
         super().__init__(json.loads(self._request()))
 
     def _build_url(self):
-        # set mandatory settings
+        # insert mandatory variables
         key, lat, lng = (self.api_key, str(self.latitude), str(self.longitude))
-        url = 'https://api.forecast.io/forecast/'
-        url += key + '/' + lat + ',' + lng
+        url = 'https://api.forecast.io/forecast/' + key + '/' + lat + ',' + lng
         if not self._options:
             return url
 

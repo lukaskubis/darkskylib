@@ -11,7 +11,7 @@ Python wrapper for the [The Dark Sky Forecast API](https://developer.forecast.io
   * [Data Points and Data Blocks](#data-points-and-data-blocks)
   * [Flags and Alerts](#flags-and-alerts)
   * [Updating data](#updating-data)
-* [TODOs](#todos-before-v02)
+* [TODOs](#todos-before-v03-beta)
 * [License](#license)
 
 ## Quick start

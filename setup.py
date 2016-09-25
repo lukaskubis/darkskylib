@@ -1,8 +1,8 @@
 from setuptools import setup
 
-setup(name='forepycast',
+setup(name='darkskylib',
       version='0.2.2',
-      description='Forecast.io API wrapper',
+      description='The Dark Sky API wrapper',
       url='https://github.com/lukaskubis/forepycast',
       author='Lukas Kubis',
       author_email='contact@lukaskubis.com',
@@ -18,9 +18,10 @@ setup(name='forepycast',
           'Programming Language :: Python :: 3.3',
           'Programming Language :: Python :: 3.4',
           'Programming Language :: Python :: 3.5',
+          'Programming Language :: Python :: 3.6',
       ],
       keywords='weather forecast',
-      packages=['forepycast'],
+      packages=['darksky'],
       install_requires=[
           'requests',
           'future'

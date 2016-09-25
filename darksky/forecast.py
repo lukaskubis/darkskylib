@@ -55,7 +55,7 @@ class Forecast(Data_point):
     def _build_url(self):
         # insert mandatory variables
         key, lat, lng = (self.api_key, str(self.latitude), str(self.longitude))
-        url = 'https://api.forecast.io/forecast/' + key + '/' + lat + ',' + lng
+        url = 'https://api.darksky.net/forecast/' + key + '/' + lat + ',' + lng
         if not self._options:
             return url
 

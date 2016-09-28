@@ -14,7 +14,7 @@ def forecast(settings={}, **kwsettings):
     longitude = fcsettings.pop('longitude', None)
 
     # Don't even try to construct the forecast if mandatory params are missing
-    for key in ('api_key', 'latitude', 'longitude'):
+    for key in {'api_key', 'latitude', 'longitude'}:
         if not eval(key):
             raise ValueError('Missing parameter: ' + key)
 

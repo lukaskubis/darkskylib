@@ -24,7 +24,7 @@ class Data_point(object):
             return setval()
 
         # set specific data handlers
-        if name in ['alerts', 'flags']:
+        if name in {'alerts', 'flags'}:
             return setval(eval(name.capitalize())(val))
 
         # set general data handlers

@@ -14,7 +14,7 @@ class Forecast(Data_point):
         self.latitude = latitude
         self.longitude = longitude
         self.api_key = api_key
-        self._options = options
+        self.options = options
         self.refresh()
 
     def __setattr__(self, name, value):
@@ -36,15 +36,15 @@ class Forecast(Data_point):
     def refresh(self, options=None, **kwoptions):
         # replace current settings with new ones
         if options is not None:
-            self._options = options
+            self.options = options
 
         # update current forecast options (if any)
-        self._options = dict(self._options, **kwoptions)
+        self.options = dict(self.options, **kwoptions)
 
         # overwrite basic mandatory attributes with new values if provided
-        self.api_key = self._options.pop('api_key', self.api_key)
-        self.latitude = self._options.pop('latitude', self.latitude)
-        self.longitude = self._options.pop('longitude', self.longitude)
+        self.api_key = self.options.pop('api_key', self.api_key)
+        self.latitude = self.options.pop('latitude', self.latitude)
+        self.longitude = self.options.pop('longitude', self.longitude)
 
         # request data from API and store it in new attributes
         super().__init__(json.loads(self._request()))
@@ -54,16 +54,16 @@ class Forecast(Data_point):
         # insert mandatory variables
         key, lat, lng = (self.api_key, str(self.latitude), str(self.longitude))
         url = 'https://api.darksky.net/forecast/' + key + '/' + lat + ',' + lng
-        if not self._options:
+        if not self.options:
             return url
 
         # time machine request
-        if 'time' in self._options.keys():
-            url += ',' + self._options.pop('time')
+        if 'time' in self.options.keys():
+            url += ',' + self.options.pop('time')
 
         # add optional query parameters
         url += '?'
-        for key, value in self._options.items():
+        for key, value in self.options.items():
             url += key + '=' + str(value) + '&'
         return url
 

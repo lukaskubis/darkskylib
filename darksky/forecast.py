@@ -18,7 +18,7 @@ class Forecast(Data_point):
         self.refresh()
 
     def __setattr__(self, name, value):
-        if name in ['_data', 'api_key', '_options', 'latitude', 'longitude']:
+        if name in ('_data', 'api_key', '_options', 'latitude', 'longitude'):
             return object.__setattr__(self, name, value)
         return super().__setattr__(name, value)
 

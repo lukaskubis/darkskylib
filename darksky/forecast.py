@@ -49,7 +49,8 @@ class Forecast(Data_point):
         # request data from API and store it in new attributes
         super().__init__(json.loads(self._request()))
 
-    def _build_url(self):
+    @property
+    def url(self):
         # insert mandatory variables
         key, lat, lng = (self.api_key, str(self.latitude), str(self.longitude))
         url = 'https://api.darksky.net/forecast/' + key + '/' + lat + ',' + lng
@@ -68,7 +69,7 @@ class Forecast(Data_point):
 
     def _request(self):
         try:
-            response = requests.get(self._build_url())
+            response = requests.get(self.url)
         except requests.exceptions.Timeout:
             print('Error: Timeout')
         except requests.exceptions.TooManyRedirects:

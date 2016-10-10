@@ -65,7 +65,7 @@ class Forecast(Data_point):
         self.longitude = self.settings.pop('longitude', self.longitude)
 
         # request data from API and store it in new attributes
-        super().__init__(json.loads(self.request())
+        super().__init__(json.loads(self.request()))
 
     def request(self):
         try:

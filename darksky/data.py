@@ -27,8 +27,7 @@ class Data_point(object):
         setval(Data_block(val) if 'data' in val.keys() else Data_point(val))
 
     def __getattr__(self, name):
-        if not self.__dict__[name]:
-            return object.__getattribute__(self, name)
+        return
 
     def __str__(self):
         return self.summary

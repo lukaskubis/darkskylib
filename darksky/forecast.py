@@ -18,7 +18,7 @@ class Forecast(Data_point):
         self.refresh()
 
     def __setattr__(self, name, value):
-        if name in ('_data', 'api_key', '_settings', 'latitude', 'longitude'):
+        if name in ('_data', 'api_key', 'settings', 'latitude', 'longitude'):
             return object.__setattr__(self, name, value)
         return super().__setattr__(name, value)
 
@@ -32,22 +32,6 @@ class Forecast(Data_point):
 
     def __exit__(self, type, value, tb):
         del self
-
-    def refresh(self, settings=None, **kwsettings):
-        # replace current settings with new ones
-        if settings is not None:
-            self.settings = settings
-
-        # update current forecast settings (if any)
-        self.settings = dict(self.settings, **kwsettings)
-
-        # overwrite basic mandatory attributes with new values if provided
-        self.api_key = self.settings.pop('api_key', self.api_key)
-        self.latitude = self.settings.pop('latitude', self.latitude)
-        self.longitude = self.settings.pop('longitude', self.longitude)
-
-        # request data from API and store it in new attributes
-        super().__init__(json.loads(self._request()))
 
     @property
     def url(self):
@@ -67,7 +51,23 @@ class Forecast(Data_point):
             url += key + '=' + str(value) + '&'
         return url
 
-    def _request(self):
+    def refresh(self, settings=None, **kwsettings):
+        # replace current settings with new ones
+        if settings is not None:
+            self.settings = settings
+
+        # update current forecast settings (if any)
+        self.settings = dict(self.settings, **kwsettings)
+
+        # overwrite basic mandatory attributes with new values if provided
+        self.api_key = self.settings.pop('api_key', self.api_key)
+        self.latitude = self.settings.pop('latitude', self.latitude)
+        self.longitude = self.settings.pop('longitude', self.longitude)
+
+        # request data from API and store it in new attributes
+        super().__init__(json.loads(self.request())
+
+    def request(self):
         try:
             response = requests.get(self.url)
         except requests.exceptions.Timeout:

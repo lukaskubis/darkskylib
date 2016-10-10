@@ -10,15 +10,15 @@ from .data import Data_point
 
 
 class Forecast(Data_point):
-    def __init__(self, api_key, latitude, longitude, **options):
+    def __init__(self, api_key, latitude, longitude, **settings):
         self.latitude = latitude
         self.longitude = longitude
         self.api_key = api_key
-        self.options = options
+        self.settings = settings
         self.refresh()
 
     def __setattr__(self, name, value):
-        if name in ('_data', 'api_key', '_options', 'latitude', 'longitude'):
+        if name in ('_data', 'api_key', '_settings', 'latitude', 'longitude'):
             return object.__setattr__(self, name, value)
         return super().__setattr__(name, value)
 
@@ -33,18 +33,18 @@ class Forecast(Data_point):
     def __exit__(self, type, value, tb):
         del self
 
-    def refresh(self, options=None, **kwoptions):
+    def refresh(self, settings=None, **kwsettings):
         # replace current settings with new ones
-        if options is not None:
-            self.options = options
+        if settings is not None:
+            self.settings = settings
 
-        # update current forecast options (if any)
-        self.options = dict(self.options, **kwoptions)
+        # update current forecast settings (if any)
+        self.settings = dict(self.settings, **kwsettings)
 
         # overwrite basic mandatory attributes with new values if provided
-        self.api_key = self.options.pop('api_key', self.api_key)
-        self.latitude = self.options.pop('latitude', self.latitude)
-        self.longitude = self.options.pop('longitude', self.longitude)
+        self.api_key = self.settings.pop('api_key', self.api_key)
+        self.latitude = self.settings.pop('latitude', self.latitude)
+        self.longitude = self.settings.pop('longitude', self.longitude)
 
         # request data from API and store it in new attributes
         super().__init__(json.loads(self._request()))
@@ -54,16 +54,16 @@ class Forecast(Data_point):
         # insert mandatory variables
         key, lat, lng = (self.api_key, str(self.latitude), str(self.longitude))
         url = 'https://api.darksky.net/forecast/' + key + '/' + lat + ',' + lng
-        if not self.options:
+        if not self.settings:
             return url
 
         # time machine request
-        if 'time' in self.options.keys():
-            url += ',' + self.options.pop('time')
+        if 'time' in self.settings.keys():
+            url += ',' + self.settings.pop('time')
 
         # add optional query parameters
         url += '?'
-        for key, value in self.options.items():
+        for key, value in self.settings.items():
             url += key + '=' + str(value) + '&'
         return url
 

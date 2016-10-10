@@ -7,12 +7,9 @@ import sys
 import requests
 
 from .data import Data_point
-from .slots import forecast_slots
 
 
 class Forecast(Data_point):
-    __slots__ = forecast_slots
-
     def __init__(self, api_key, latitude, longitude, **options):
         self.latitude = latitude
         self.longitude = longitude

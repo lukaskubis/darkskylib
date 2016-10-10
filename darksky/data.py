@@ -1,12 +1,8 @@
 from builtins import str
 from builtins import super
 
-from .slots import *
-
 
 class Data_point(object):
-    __slots__ = data_point_slots
-
     def __init__(self, data):
         self._data = data
         for name, val in self().items():
@@ -36,8 +32,6 @@ class Data_point(object):
 
 
 class Data_block(Data_point):
-    __slots__ = data_block_slots
-
     def __call__(self, index=None):
         return self.__getitem__(index) if index else super().__call__()
 
@@ -57,8 +51,6 @@ class Data_block(Data_point):
 
 
 class Flags(Data_point):
-    __slots__ = flags_slots
-
     def __setattr__(self, name, value):
         name = name.replace('-', '_')
         return object.__setattr__(self, name, value)
@@ -68,7 +60,5 @@ class Flags(Data_point):
 
 
 class Alerts(Data_point):
-    __slots__ = alerts_slots
-
     def __str__(self):
         return str(self())

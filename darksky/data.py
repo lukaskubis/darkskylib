@@ -27,8 +27,11 @@ class Data_point(object):
         setval(Data_block(val) if 'data' in val.keys() else Data_point(val))
 
     def __getattr__(self, name):
-        if name not in self.__slots__:
-            return object.__getattribute__(self, name)
+        # return none if attribute does not exist
+        return
+
+    def __str__(self):
+        return self.summary
 
 
 class Data_block(Data_point):

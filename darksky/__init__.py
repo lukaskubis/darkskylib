@@ -4,18 +4,21 @@ from builtins import str
 from .forecast import Forecast
 
 
-def forecast(settings={}, **kwsettings):
-    # merge default and explicit settings
-    fcsettings = dict(settings, **kwsettings)
+def forecast(params={}, **kwparams):
+    if not isinstance(params, dict):
+        raise TypeError("'forecast': params not in dictionary.")
+
+    # merge default and explicit params
+    parameters = dict(params, **kwparams)
 
     # set mandatory parameters here
-    api_key = fcsettings.pop('api_key', None)
-    latitude = fcsettings.pop('latitude', None)
-    longitude = fcsettings.pop('longitude', None)
+    key = parameters.pop('key', None)
+    latitude = parameters.pop('latitude', None)
+    longitude = parameters.pop('longitude', None)
 
-    # Don't even try to construct the forecast if mandatory params are missing
-    for key in ('api_key', 'latitude', 'longitude'):
-        if not eval(key):
-            raise ValueError('Missing parameter: ' + key)
+    # Required parameters are missing
+    for param in ('key', 'latitude', 'longitude'):
+        if not eval(param):
+            raise ValueError('Missing parameter: ' + param)
 
-    return Forecast(api_key, latitude, longitude, **fcsettings)
+    return Forecast(key, latitude, longitude, **parameters)

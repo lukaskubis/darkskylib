@@ -8,21 +8,18 @@ import requests
 
 from .data import Data_point
 
-
 class Forecast(Data_point):
-    def __init__(self, api_key, latitude, longitude, **params):
-        self.latitude = latitude
-        self.longitude = longitude
-        self.api_key = api_key
-        self.params = params
-        self.refresh()
+    def __init__(self, key, latitude, longitude, **queries):
+        self._parameters = dict()
+        self.refresh(key=key, latitude=latitude, longitude=longitude, **queries)
 
     def __setattr__(self, key, value):
-        return object.__setattr__(self, key, value)
+        if key in ('_parameters', '_data'):
+            return object.__setattr__(self, key, value)
 
     def __getattr__(self, key):
-        if key in self()['currently'].keys():
-            return self()['currently'][key]
+        if key in self._data['currently'].keys():
+            return self._data['currently'][key]
         return object.__getattribute__(self, key)
 
     def __enter__(self):
@@ -34,33 +31,30 @@ class Forecast(Data_point):
     @property
     def url(self):
         # insert mandatory variables
-        key, lat, lng = (self.api_key, str(self.latitude), str(self.longitude))
-        url = 'https://api.darksky.net/forecast/' + key + '/' + lat + ',' + lng
-        if not self.params:
+        params = dict(self._parameters)
+        url = 'https://api.darksky.net/forecast/'
+        url += params.pop('key') + '/'
+        url += str(params.pop('latitude')) + ','
+        url += str(params.pop('longitude'))
+        if not params:
             return url
 
         # time machine request
-        if 'time' in self.params.keys():
-            url += ',' + str(self.params.pop('time'))
+        if 'time' in params.keys():
+            url += ',' + str(params.pop('time'))
 
         # add optional query parameters
         url += '?'
-        for key, value in self.params.items():
+        for key, value in params.items():
             url += key + '=' + str(value) + '&'
         return url
 
-    def refresh(self, params=None, **kwparams):
-        # replace current params with new ones
-        if params is not None:
-            self.params = params
+    def refresh(self, params={}, **kwparams):
+        if not isinstance(params, dict):
+            raise TypeError("'refresh': params not in dictionary.")
 
-        # update optional request parameters (if any)
-        self.params = dict(self.params, **kwparams)
-
-        # overwrite basic mandatory attributes with new values if provided
-        self.api_key = self.params.pop('api_key', self.api_key)
-        self.latitude = self.params.pop('latitude', self.latitude)
-        self.longitude = self.params.pop('longitude', self.longitude)
+        # update request parameters
+        self._parameters = dict(self._parameters, **dict(params, **kwparams))
 
         # request data from API
         try:
@@ -72,7 +66,8 @@ class Forecast(Data_point):
         except requests.exceptions.RequestException as ex:
             print(ex)
             sys.exit(1)
+
+        self.response_headers = response.headers
         if response.status_code is not 200:
             raise requests.exceptions.HTTPError('Bad response')
-
         return super().__init__(json.loads(response.text))

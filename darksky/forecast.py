@@ -10,18 +10,20 @@ from .data import Data_point
 
 
 class Forecast(Data_point):
-    def __init__(self, api_key, latitude, longitude, **settings):
+    def __init__(self, api_key, latitude, longitude, **params):
         self.latitude = latitude
         self.longitude = longitude
         self.api_key = api_key
-        self.settings = settings
+        self.params = params
         self.refresh()
 
     def __setattr__(self, key, value):
         return object.__setattr__(self, key, value)
 
     def __getattr__(self, key):
-        return getattr(self.currently()[key],object.__getattribute__(self, key))
+        if key in self()['currently'].keys():
+            return self()['currently'][key]
+        return object.__getattribute__(self, key)
 
     def __enter__(self):
         return self
@@ -34,21 +36,33 @@ class Forecast(Data_point):
         # insert mandatory variables
         key, lat, lng = (self.api_key, str(self.latitude), str(self.longitude))
         url = 'https://api.darksky.net/forecast/' + key + '/' + lat + ',' + lng
-        if not self.settings:
+        if not self.params:
             return url
 
         # time machine request
-        if 'time' in self.settings.keys():
-            url += ',' + str(self.settings.pop('time'))
+        if 'time' in self.params.keys():
+            url += ',' + str(self.params.pop('time'))
 
         # add optional query parameters
         url += '?'
-        for key, value in self.settings.items():
+        for key, value in self.params.items():
             url += key + '=' + str(value) + '&'
         return url
 
-    @property
-    def request(self):
+    def refresh(self, params=None, **kwparams):
+        # replace current params with new ones
+        if params is not None:
+            self.params = params
+
+        # update optional request parameters (if any)
+        self.params = dict(self.params, **kwparams)
+
+        # overwrite basic mandatory attributes with new values if provided
+        self.api_key = self.params.pop('api_key', self.api_key)
+        self.latitude = self.params.pop('latitude', self.latitude)
+        self.longitude = self.params.pop('longitude', self.longitude)
+
+        # request data from API
         try:
             response = requests.get(self.url)
         except requests.exceptions.Timeout:
@@ -58,30 +72,7 @@ class Forecast(Data_point):
         except requests.exceptions.RequestException as ex:
             print(ex)
             sys.exit(1)
-        try:
-            cache_control = response.headers['Cache-Control']
-            expires = response.headers['Expires']
-            x_forecast_api_calls = response.headers['X-Forecast-API-Calls']
-            x_responde_time = response.headers['X-Response-Time']
-        except KeyError as kerr:
-            msg = 'Warning: Could not get headers. ' + str(kerr)
-            print(msg)
         if response.status_code is not 200:
             raise requests.exceptions.HTTPError('Bad response')
-        return response.text
 
-    def refresh(self, settings=None, **kwsettings):
-        # replace current settings with new ones
-        if settings is not None:
-            self.settings = settings
-
-        # update current forecast settings (if any)
-        self.settings = dict(self.settings, **kwsettings)
-
-        # overwrite basic mandatory attributes with new values if provided
-        self.api_key = self.settings.pop('api_key', self.api_key)
-        self.latitude = self.settings.pop('latitude', self.latitude)
-        self.longitude = self.settings.pop('longitude', self.longitude)
-
-        # request data from API and store it in new attributes
-        super().__init__(json.loads(self.request))
+        return super().__init__(json.loads(response.text))

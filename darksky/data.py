@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from builtins import str
 from builtins import super
 
@@ -29,15 +30,10 @@ class Data_point(object):
     def __getattr__(self, name):
         return
 
-    def __str__(self):
-        return self.summary
-
 
 class Data_block(Data_point):
     def __call__(self, index=None):
-        if index is None:
-            return super().__call__()
-        return self.__getitem__(index)()
+        return self.__getitem__(index)() if index is not None else self._data
 
     def __setattr__(self, name, value):
         if name == 'data':
@@ -59,10 +55,7 @@ class Flags(Data_point):
         name = name.replace('-', '_')
         return object.__setattr__(self, name, value)
 
-    def __str__(self):
-        return str(self())
-
 
 class Alerts(Data_point):
-    def __str__(self):
-        return str(self())
+    def __call__(self):
+        return super().__call__()

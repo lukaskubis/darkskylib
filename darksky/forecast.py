@@ -17,15 +17,11 @@ class Forecast(Data_point):
         self.settings = settings
         self.refresh()
 
-    def __setattr__(self, name, value):
-        if name in ('_data', 'api_key', 'settings', 'latitude', 'longitude'):
-            return object.__setattr__(self, name, value)
-        return super().__setattr__(name, value)
+    def __setattr__(self, key, value):
+        return object.__setattr__(self, key, value)
 
-    def __getattr__(self, name):
-        if name in self()['currently'].keys():
-            return self()['currently'][name]
-        return object.__getattribute__(self, name)
+    def __getattr__(self, key):
+        return getattr(self.currently()[key],object.__getattribute__(self, key))
 
     def __enter__(self):
         return self
@@ -43,7 +39,7 @@ class Forecast(Data_point):
 
         # time machine request
         if 'time' in self.settings.keys():
-            url += ',' + self.settings.pop('time')
+            url += ',' + str(self.settings.pop('time'))
 
         # add optional query parameters
         url += '?'
@@ -51,22 +47,7 @@ class Forecast(Data_point):
             url += key + '=' + str(value) + '&'
         return url
 
-    def refresh(self, settings=None, **kwsettings):
-        # replace current settings with new ones
-        if settings is not None:
-            self.settings = settings
-
-        # update current forecast settings (if any)
-        self.settings = dict(self.settings, **kwsettings)
-
-        # overwrite basic mandatory attributes with new values if provided
-        self.api_key = self.settings.pop('api_key', self.api_key)
-        self.latitude = self.settings.pop('latitude', self.latitude)
-        self.longitude = self.settings.pop('longitude', self.longitude)
-
-        # request data from API and store it in new attributes
-        super().__init__(json.loads(self.request()))
-
+    @property
     def request(self):
         try:
             response = requests.get(self.url)
@@ -88,3 +69,19 @@ class Forecast(Data_point):
         if response.status_code is not 200:
             raise requests.exceptions.HTTPError('Bad response')
         return response.text
+
+    def refresh(self, settings=None, **kwsettings):
+        # replace current settings with new ones
+        if settings is not None:
+            self.settings = settings
+
+        # update current forecast settings (if any)
+        self.settings = dict(self.settings, **kwsettings)
+
+        # overwrite basic mandatory attributes with new values if provided
+        self.api_key = self.settings.pop('api_key', self.api_key)
+        self.latitude = self.settings.pop('latitude', self.latitude)
+        self.longitude = self.settings.pop('longitude', self.longitude)
+
+        # request data from API and store it in new attributes
+        super().__init__(json.loads(self.request))

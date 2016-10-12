@@ -16,10 +16,11 @@ class Forecast(Data_point):
     def __setattr__(self, key, value):
         if key in ('_parameters', '_data'):
             return object.__setattr__(self, key, value)
+        return super().__setattr__(key, value)
 
     def __getattr__(self, key):
-        if key in self._data['currently'].keys():
-            return self._data['currently'][key]
+        if key in self.currently().keys():
+            return self.currently()[key]
         return object.__getattribute__(self, key)
 
     @property

@@ -10,6 +10,7 @@ This Python library for the [Dark Sky API](https://darksky.net/dev/docs) provide
   * [Data Points and Data Blocks](#data-points-and-data-blocks)
   * [Flags and Alerts](#flags-and-alerts)
   * [Updating data](#updating-data)
+  * [Developer utilities](#things-useful-for-developers)
 * [TODOs](#todos-before-v03-beta)
 * [License](#license)
 
@@ -92,17 +93,8 @@ All `-` symbols in attribute names of **Flags** objects are replaced by `_` symb
 Even though **Alerts** are represented by a list, the data accessibility through instance attributes is preserved for alerts in the list.
 
 ```python
->>> for alert in boston.alerts:
-...     print(alert.description)
-...
-...FREEZE WATCH NOW IN EFFECT FROM LATE FRIDAY NIGHT THROUGH
-SATURDAY MORNING...
-* LOCATION...PORTIONS OF INTERIOR EASTERN MASSACHUSETTS.
-* TEMPERATURES...LOWS WILL FALL BACK TO THE UPPER 20S TO LOWER 30S
-BY DAYBREAK SATURDAY.
-* TIMING...BETWEEN 3 AM AND 9 AM SATURDAY MORNING.
-* IMPACTS...THE POTENTIAL EXISTS FOR SUB-FREEZING TEMPERATURES
-WHICH COULD KILL CROPS AND OTHER SENSITIVE VEGETATION.
+>>> boston.alerts[0].title
+'Freeze Watch for Norfolk, MA'
 ```
 
 ### Raw data
@@ -127,12 +119,12 @@ Use `refresh()` method to update data of a `Forecast` object. You can update any
 >>> boston.refresh()
 >>> (boston.time, boston.temperature, len(boston.hourly))
 (1476403500, 60.72, 49)
-
+>>>
 >>> settings = dict(units='si', extend='hourly')
 >>> boston.refresh(settings)
 >>> (boston.time, boston.temperature, len(boston.hourly))
 (1476404205, 15.81, 169)
-
+>>>
 >>> boston.refresh(units='us')
 >>> (boston.time, boston.temperature, len(boston.hourly))
 (1476404489, 60.57, 169)

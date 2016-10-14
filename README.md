@@ -93,7 +93,7 @@ Even though **Alerts** are represented by a list, the data accessibility through
 
 ```python
 ... boston.alerts[0].description
-'Flood Watch for Mason, WA'
+'Freeze Watch for Norfolk, MA'
 ```
 
 ### Raw data

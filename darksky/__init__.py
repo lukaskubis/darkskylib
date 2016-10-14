@@ -5,19 +5,39 @@ from .forecast import Forecast
 
 
 def forecast(*params, **kwparams):
+
+    # required params as a dictionary
     if len(params) == 1:
-        # required params as a dictionary
         if not isinstance(params[0], dict):
             msg = "'params' not a dictionary ({})".format(type(params))
             raise AttributeError(msg)
         params = params[0]
+
+    # location as a string query
+    elif len(params) == 2:
+        try:
+            from geopy.geocoders import Nominatim
+        except ImportError:
+            msg = "Required library not installed: 'geopy'"
+            raise ImportError(msg)
+
+        key, address = params
+        location = Nominatim().geocode(address)
+        params = dict(
+            key = key,
+            latitude = location.latitude,
+            longitude = location.longitude
+        )
+
+    # required params as positional arguments
     elif len(params) == 3:
-        # required params as positional arguments
         params = dict(
             key = params[0],
             latitude = params[1],
-            longitude = longitude[2]
+            longitude = params[2]
         )
+
+    # conflicting location parameters
     else:
         args = len(params)
         msg = "forecast() doesn't take {} positional arguments".format(args)

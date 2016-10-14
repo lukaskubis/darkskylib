@@ -32,7 +32,7 @@ There are more ways to access the API data. Function `forecast` handles all requ
 The first 3 positional arguments are identical to the 3 required parameters for API call. The optional query parameters need to be provided as keyword arguments. You can optionally use a dictionary with corresponding names and values. Providing additional keyword arguments in this instance will update the corresponding values in the dictionary. You can also provide all parameters using keyword arguments only.
 
 ```python
->>> boston_settings = {'key':key, 'latitude':42.3601, 'longitude':-71.0589}
+>>> boston_settings = dict(key=key, latitude=42.3601, longitude=-71.0589)
 >>> boston = forecast(boston_settings)
 >>>
 ```
@@ -66,7 +66,7 @@ The values are accessed using instance attributes. You can access current values
 60.72
 ```
 
-**Data blocks** are indexable and iterable, simply use `boston.hourly[index]` to access the data.
+**Data blocks** are indexable and iterable by their data.
 
 ```python
 >>> len(boston.hourly)
@@ -92,8 +92,17 @@ All `-` symbols in attribute names of **Flags** objects are replaced by `_` symb
 Even though **Alerts** are represented by a list, the data accessibility through instance attributes is preserved for alerts in the list.
 
 ```python
-... boston.alerts[0].description
-'Freeze Watch for Norfolk, MA'
+>>> for alert in boston.alerts:
+...     print(alert.description)
+...
+...FREEZE WATCH NOW IN EFFECT FROM LATE FRIDAY NIGHT THROUGH
+SATURDAY MORNING...
+* LOCATION...PORTIONS OF INTERIOR EASTERN MASSACHUSETTS.
+* TEMPERATURES...LOWS WILL FALL BACK TO THE UPPER 20S TO LOWER 30S
+BY DAYBREAK SATURDAY.
+* TIMING...BETWEEN 3 AM AND 9 AM SATURDAY MORNING.
+* IMPACTS...THE POTENTIAL EXISTS FOR SUB-FREEZING TEMPERATURES
+WHICH COULD KILL CROPS AND OTHER SENSITIVE VEGETATION.
 ```
 
 ### Raw data
@@ -104,10 +113,11 @@ Call any object as a function to get its raw data:
 {'nearestStormBearing': 42, 'temperature': 60.72, 'nearestStormDistance': 13, 'pressure': 1020.49, 'windBearing': 256, 'dewPoint': 53.32, 'cloudCover': 0.37, 'apparentTemperature': 60.72, 'precipProbability': 0, 'summary': 'Partly Cloudy', 'icon': 'partly-cloudy-night', 'humidity': 0.77, 'ozone': 289.05, 'precipIntensity': 0, 'windSpeed': 5.66, 'visibility': 9.62, 'time': 1476403500}
 ```
 
-Calling **data block** with index number will return raw data of a **data point** specified by the index number this is equivalent to `forecast.datablock[index]()`.
+Calling **data block** with index number will return raw data of a **data point** specified by the index number.
 
 ```python
->>> boston.hourly(2)
+>>> # instead of 'boston.hourly[2]()'
+... boston.hourly(2)
 {'ozone': 290.06, 'temperature': 58.93, 'pressure': 1017.8, 'windBearing': 274, 'dewPoint': 52.58, 'cloudCover': 0.29, 'apparentTemperature': 58.93, 'windSpeed': 7.96, 'summary': 'Partly Cloudy', 'icon': 'partly-cloudy-night', 'humidity': 0.79, 'precipProbability': 0, 'precipIntensity': 0, 'visibility': 8.67, 'time': 1476410400}
 ```
 ### Updating data

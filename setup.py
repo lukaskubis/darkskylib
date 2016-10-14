@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='darkskylib',
-      version='0.2.2',
+      version='0.2.3',
       description='The Dark Sky API wrapper',
       url='https://github.com/lukaskubis/darkskylib',
       author='Lukas Kubis',
@@ -12,7 +12,6 @@ setup(name='darkskylib',
           'License :: OSI Approved :: MIT License',
           'Topic :: Scientific/Engineering :: Atmospheric Science',
           'Topic :: Home Automation',
-          'Intended Audience :: Developers',
           'Programming Language :: Python :: 2',
           'Programming Language :: Python :: 2.6',
           'Programming Language :: Python :: 2.7',

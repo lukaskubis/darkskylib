@@ -23,6 +23,12 @@ class Forecast(Data_point):
             return self.currently()[key]
         return object.__getattribute__(self, key)
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, tb):
+        del self
+
     @property
     def url(self):
         # insert mandatory variables

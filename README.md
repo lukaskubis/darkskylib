@@ -139,12 +139,43 @@ Response headers are stored in a dictionary under `response_headers` attribute.
 '146.035ms'
 ```
 
+## Example script
+```python
+from darksky import forecast
+from datetime import date, timedelta
+
+weekday = date.today()
+with forecast(key, 'Boston') as boston:
+    print(boston.daily.summary, end='\n---\n')
+    for day in boston.daily:
+        day = dict(
+                day = date.strftime(weekday, '%a'),
+                sum = day.summary,
+                tempMin = day.temperatureMin,
+                tempMax = day.temperatureMax,
+                )
+        print('{day}: {sum} Temp range: {tempMin} - {tempMax}°F'.format(**day))
+        weekday += timedelta(days=1)
+```
+Output:
+
+    Light rain on Friday and Saturday, with temperatures bottoming out at 48°F on Tuesday.
+    ---
+    Sun: Partly cloudy in the morning. Temp range: 44.86 - 57.26°F
+    Mon: Mostly cloudy in the morning. Temp range: 44.26 - 55.28°F
+    Tue: Clear throughout the day. Temp range: 36.85 - 47.9°F
+    Wed: Partly cloudy starting in the afternoon, continuing until evening. Temp range: 33.23 - 47.93°F
+    Thu: Light rain overnight. Temp range: 35.75 - 49.71°F
+    Fri: Light rain in the morning and afternoon. Temp range: 45.47 - 57.11°F
+    Sat: Drizzle in the morning. Temp range: 43.3 - 62.08°F
+    Sun: Clear throughout the day. Temp range: 39.81 - 60.84°F
+
 ## TODOs before v0.3 Beta
 [![Issues](https://img.shields.io/github/issues/lukaskubis/darkskylib.svg)](https://github.com/lukaskubis/darkskylib/issues)
 - [ ] docs & docstrings
 - [ ] unit tests
 - [x] ~~implement geocoding for location query strings~~
-- [ ] implement parting human-readable strings as a `time` parameter.
+- [ ] implement parsing human-readable strings as a `time` parameter.
 - [ ] improve refreshing of mandatory parameters
 - [x] ~~improve handling forecast attributes when setting values~~
 - [ ] implement `__slots__` again maybe?

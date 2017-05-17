@@ -1,26 +1,25 @@
-from builtins import dict
+# forecast.py
+
 from builtins import super
-from builtins import str
 
 import json
 import sys
 import requests
 
 from .data import Data_point
-
 class Forecast(Data_point):
     def __init__(self, key, latitude, longitude, **queries):
-        self._parameters = dict()
-        self.refresh(key=key, latitude=latitude, longitude=longitude, **queries)
+        self._parameters = dict(key=key, latitude=latitude, longitude=longitude)
+        self.refresh(**queries)
 
     def __setattr__(self, key, value):
-        if key in ('_parameters', '_data'):
+        if key in ('_queries', '_parameters', 'rawdata'):
             return object.__setattr__(self, key, value)
         return super().__setattr__(key, value)
 
     def __getattr__(self, key):
-        if key in self.currently().keys():
-            return self.currently()[key]
+        if key in self.currently.rawdata.keys():
+            return self.currently.rawdata[key]
         return object.__getattribute__(self, key)
 
     def __enter__(self):
@@ -32,30 +31,27 @@ class Forecast(Data_point):
     @property
     def url(self):
         # insert mandatory variables
-        params = dict(self._parameters)
         url = 'https://api.darksky.net/forecast/'
-        url += params.pop('key') + '/'
-        url += str(params.pop('latitude')) + ','
-        url += str(params.pop('longitude'))
-        if not params:
+        url += self._parameters['key'] + '/'
+        url += str(self._parameters['latitude']) + ','
+        url += str(self._parameters['longitude'])
+        if not self._queries:
             return url
 
-        # time machine request
-        if 'time' in params.keys():
-            url += ',' + str(params.pop('time'))
+        # time machine
+        if 'time' in self._queries.keys():
+            url += ',' + str(self._queries['time'])
 
         # add optional query parameters
         url += '?'
-        for key, value in params.items():
+        for key, value in self._queries.items():
             url += key + '=' + str(value) + '&'
         return url
 
-    def refresh(self, params={}, **kwparams):
-        if not isinstance(params, dict):
-            raise TypeError("'refresh': params not in dictionary.")
 
-        # update request parameters
-        self._parameters = dict(self._parameters, **dict(params, **kwparams))
+    def refresh(self, **queries):
+        # update query parameters
+        self._queries = queries
 
         # request data from API
         try:

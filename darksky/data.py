@@ -1,27 +1,22 @@
-from builtins import str
-from builtins import super
-
+# data.py
 
 class Data_point(object):
     def __init__(self, data):
-        self._data = data
+        self.rawdata = data
 
-        if isinstance(self(), dict):
-            for name, val in self().items():
+        if isinstance(self.rawdata, dict):
+            for name, val in self.rawdata.items():
                 setattr(self, name, val)
 
-        if isinstance(self(), list):
-            setattr(self, 'data', self())
-
-    def __call__(self):
-        return self._data
+        if isinstance(self.rawdata, list):
+            setattr(self, 'data', self.rawdata)
 
     def __setattr__(self, name, val):
         def setval(new_val=None):
             return object.__setattr__(self, name, new_val if new_val else val)
 
         # regular value
-        if not isinstance(val, (list, dict)) or name == '_data':
+        if not isinstance(val, (list, dict)) or name == 'rawdata':
             return setval()
 
         # set specific data handlers
@@ -41,9 +36,6 @@ class Data_point(object):
 
 
 class Data_block(Data_point):
-    def __call__(self, index=None):
-        return self.__getitem__(index)() if index is not None else self._data
-
     def __iter__(self):
         return self.data.__iter__()
 

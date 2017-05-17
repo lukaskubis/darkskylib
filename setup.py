@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='darkskylib',
-      version='0.2.3',
+      version='0.2.4',
       description='The Dark Sky API wrapper',
       url='https://github.com/lukaskubis/darkskylib',
       author='Lukas Kubis',
@@ -25,8 +25,8 @@ setup(name='darkskylib',
       keywords='darksky,dark sky,forecast,weather,home weather,weather station',
       packages=['darksky'],
       install_requires=[
+          'future',
           'requests',
-          'future'
       ],
       zip_safe=False
       )

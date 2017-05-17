@@ -1,18 +1,16 @@
 # darkskylib
-[![Build Status](https://travis-ci.org/lukaskubis/darkskylib.svg?branch=master)](https://travis-ci.org/lukaskubis/darkskylib) [![GitHub release](https://img.shields.io/github/release/lukaskubis/darkskylib.svg)](https://github.com/lukaskubis/darkskylib/releases) [![PyPI](https://img.shields.io/pypi/v/darkskylib.svg)](https://pypi.python.org/pypi/darkskylib) [![PyPI](https://img.shields.io/pypi/status/darkskylib.svg)](https://pypi.python.org/pypi/darkskylib) [![python](https://img.shields.io/pypi/pyversions/darkskylib.svg)](https://pypi.python.org/pypi/darkskylib) [![GitHub license](https://img.shields.io/badge/license-MIT-lightgray.svg)](https://raw.githubusercontent.com/lukaskubis/darkskylib/master/LICENSE)
-
-![Imgur](http://i.imgur.com/H109Fbs.gif)
+[![GitHub release](https://img.shields.io/github/release/lukaskubis/darkskylib.svg)](https://github.com/lukaskubis/darkskylib/releases) [![PyPI](https://img.shields.io/pypi/v/darkskylib.svg)](https://pypi.python.org/pypi/darkskylib) [![PyPI](https://img.shields.io/pypi/status/darkskylib.svg)](https://pypi.python.org/pypi/darkskylib) [![python](https://img.shields.io/pypi/pyversions/darkskylib.svg)](https://pypi.python.org/pypi/darkskylib) [![GitHub license](https://img.shields.io/badge/license-MIT-lightgray.svg)](https://raw.githubusercontent.com/lukaskubis/darkskylib/master/LICENSE)
 
 This Python library for the [Dark Sky API](https://darksky.net/dev/docs) provides access to detailed weather information from around the globe.
 
-* [Quick start](#quick-start)
-  * [Installation](#installation)
-  * [API Calls](#api-calls)
-  * [Data Points and Data Blocks](#data-points-and-data-blocks)
-  * [Flags and Alerts](#flags-and-alerts)
-  * [Updating data](#updating-data)
-  * [Developer utilities](#things-useful-for-developers)
-* [TODOs](#todos-before-v03-beta)
+
+* [Installation](#installation)
+* [API Calls](#api-calls)
+* [Data Points and Data Blocks](#data-points-and-data-blocks)
+* [Flags and Alerts](#flags-and-alerts)
+* [Updating data](#updating-data)
+* [Developer utilities](#things-useful-for-developers)
+* [Example Script](#example-script)
 * [License](#license)
 
 ## Quick start
@@ -31,31 +29,15 @@ There are more ways to access the API data. Function `forecast` handles all requ
 >>>
 ```
 
-The first 3 positional arguments are identical to the 3 required parameters for API call. The optional query parameters need to be provided as keyword arguments. You can optionally use a dictionary with corresponding names and values. Providing additional keyword arguments in this instance will update the corresponding values in the dictionary. You can also provide all parameters using keyword arguments only.
-
-```python
->>> boston_settings = dict(key=key, latitude=42.3601, longitude=-71.0589)
->>> boston = forecast(boston_settings)
->>>
-```
-
-If you don't know the latitude and longitude of the location, you can replace them with a search query string as a second positional argument.
-I do not include the required geopy library in a list of dependencies since this feature is beyond the API, however, I might add it in the future.
-If you don't have geopy installed, exception is raised.
-
-Also, at this moment, this is the only configuration of 2 arguments that works:
-
-```python
->>> boston = forecast(key, 'Boston')
->>>
-```
+The first 3 positional arguments are identical to the 3 required parameters for API call. The optional query parameters need to be provided as keyword arguments.
 
 Using `time` argument will get you a **time machine call**.
 
 ```python
+>>> BOSTON = key, 42.3601, -71.0589
 >>> from datetime import datetime as dt
 >>> t = dt(2013, 5, 6, 12).isoformat()
->>> boston = forecast(settings, time=t)
+>>> boston = forecast(*BOSTON, time=t)
 >>> boston.time
 1367866800
 ```
@@ -77,13 +59,13 @@ The values are accessed using instance attributes. You can access current values
 >>> boston.hourly[1].temperature
 59.49
 >>>
->>> # list temperatures for next 10 hours using slicing
+>>> # list temperatures for next 10 hours
 ... [hour.temperature for hour in boston.hourly[:10]]
 [60.83, 59.49, 58.93, 57.95, 56.01, 53.95, 51.21, 49.21, 47.95, 46.31]
 ```
 
 ### Flags and Alerts
-All `-` symbols in attribute names of **Flags** objects are replaced by `_` symbols. This doesn't affect the keys in raw data dictionary, but it's a necessary change that needs to be done in order to keep the functionality consistent throughout the library.
+All dashes `-` in attribute names of **Flags** objects are replaced by underscores `_`. This doesn't affect the keys in raw data dictionary, but it's a necessary change in order to keep the functionality consistent throughout the library.
 
 ```python
 >>> # instead of 'boston.flags.isd-stations'
@@ -99,22 +81,15 @@ Even though **Alerts** are represented by a list, the data accessibility through
 ```
 
 ### Raw data
-Call any object as a function to get its raw data:
+Use `rawdata` attribute:
 
 ```python
->>> boston.currently()
-{'nearestStormBearing': 42, 'temperature': 60.72, 'nearestStormDistance': 13, 'pressure': 1020.49, 'windBearing': 256, 'dewPoint': 53.32, 'cloudCover': 0.37, 'apparentTemperature': 60.72, 'precipProbability': 0, 'summary': 'Partly Cloudy', 'icon': 'partly-cloudy-night', 'humidity': 0.77, 'ozone': 289.05, 'precipIntensity': 0, 'windSpeed': 5.66, 'visibility': 9.62, 'time': 1476403500}
-```
-
-Calling **data block** with index number will return raw data of a **data point** specified by the index number.
-
-```python
->>> # instead of 'boston.hourly[2]()'
-... boston.hourly(2)
+>>> boston.hourly[2].rawdata
 {'ozone': 290.06, 'temperature': 58.93, 'pressure': 1017.8, 'windBearing': 274, 'dewPoint': 52.58, 'cloudCover': 0.29, 'apparentTemperature': 58.93, 'windSpeed': 7.96, 'summary': 'Partly Cloudy', 'icon': 'partly-cloudy-night', 'humidity': 0.79, 'precipProbability': 0, 'precipIntensity': 0, 'visibility': 8.67, 'time': 1476410400}
 ```
+
 ### Updating data
-Use `refresh()` method to update data of a `Forecast` object. You can update any request parameter using a dictionary or keyword arguments. The `refresh()` method takes either a dictionary as a positional argument, keyword arguments or a combination of both. (disabling optional queries will be added in the next commit)
+Use `refresh()` method to update data of a `Forecast` object. The `refresh()` method takes optional queries (including `time`, making it a **Time machine** object) as keyword arguments. Calling `refresh()` without any arguments will set all queries to default values.
 
 ```python
 >>> boston.refresh()
@@ -128,10 +103,10 @@ Use `refresh()` method to update data of a `Forecast` object. You can update any
 >>>
 >>> boston.refresh(units='us')
 >>> (boston.time, boston.temperature, len(boston.hourly))
-(1476404489, 60.57, 169)
+(1476404489, 60.57, 49)
 ```
 
-### Things useful for Developers
+### For Developers
 Response headers are stored in a dictionary under `response_headers` attribute.
 
 ```python
@@ -144,17 +119,18 @@ Response headers are stored in a dictionary under `response_headers` attribute.
 from darksky import forecast
 from datetime import date, timedelta
 
+BOSTON = 42.3601, 71.0589
+
 weekday = date.today()
-with forecast(key, 'Boston') as boston:
+with forecast('API_KEY', *BOSTON) as boston:
     print(boston.daily.summary, end='\n---\n')
     for day in boston.daily:
-        day = dict(
-                day = date.strftime(weekday, '%a'),
-                sum = day.summary,
-                tempMin = day.temperatureMin,
-                tempMax = day.temperatureMax,
-                )
-        print('{day}: {sum} Temp range: {tempMin} - {tempMax}°F'.format(**day))
+        day = dict(day = date.strftime(weekday, '%a'),
+                   sum = day.summary,
+                   tempMin = day.temperatureMin,
+                   tempMax = day.temperatureMax
+                   )
+        print('{day}: {sum} Temp range: {tempMin} - {tempMax}'.format(**day))
         weekday += timedelta(days=1)
 ```
 Output:
@@ -169,16 +145,6 @@ Output:
     Fri: Light rain in the morning and afternoon. Temp range: 45.47 - 57.11°F
     Sat: Drizzle in the morning. Temp range: 43.3 - 62.08°F
     Sun: Clear throughout the day. Temp range: 39.81 - 60.84°F
-
-## TODOs before v0.3 Beta
-[![Issues](https://img.shields.io/github/issues/lukaskubis/darkskylib.svg)](https://github.com/lukaskubis/darkskylib/issues)
-- [ ] docs & docstrings
-- [ ] unit tests
-- [x] ~~implement geocoding for location query strings~~
-- [ ] implement parsing human-readable strings as a `time` parameter.
-- [ ] improve refreshing of mandatory parameters
-- [x] ~~improve handling forecast attributes when setting values~~
-- [ ] implement `__slots__` again maybe?
 
 ## License
 The code is available under terms of [MIT License](https://raw.githubusercontent.com/lukaskubis/darkskylib/master/LICENSE)

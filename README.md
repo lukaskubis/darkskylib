@@ -107,8 +107,7 @@ Use `refresh()` method to update data of a `Forecast` object. The `refresh()` me
 >>> (boston.time, boston.temperature, len(boston.hourly))
 (1476403500, 60.72, 49)
 >>>
->>> settings = dict(units='si', extend='hourly')
->>> boston.refresh(settings)
+>>> boston.refresh(units='si', extend='hourly')
 >>> (boston.time, boston.temperature, len(boston.hourly))
 (1476404205, 15.81, 169)
 >>>

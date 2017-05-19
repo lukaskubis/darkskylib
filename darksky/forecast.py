@@ -6,20 +6,20 @@ import json
 import sys
 import requests
 
-from .data import Data_point
-class Forecast(Data_point):
+from .data import DataPoint
+class Forecast(DataPoint):
     def __init__(self, key, latitude, longitude, **queries):
         self._parameters = dict(key=key, latitude=latitude, longitude=longitude)
         self.refresh(**queries)
 
     def __setattr__(self, key, value):
-        if key in ('_queries', '_parameters', 'rawdata'):
+        if key in ('_queries', '_parameters', '_data'):
             return object.__setattr__(self, key, value)
         return super().__setattr__(key, value)
 
     def __getattr__(self, key):
-        if key in self.currently.rawdata.keys():
-            return self.currently.rawdata[key]
+        if key in self.currently._data.keys():
+            return self.currently._data[key]
         return object.__getattribute__(self, key)
 
     def __enter__(self):

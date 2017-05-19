@@ -21,7 +21,7 @@ Before you start using this library, you need to get your API key [here](https:/
     pip install darkskylib
 
 ### API Calls
-There are more ways to access the API data. Function `forecast` handles all request parameters and returns a `Forecast` object.
+Function `forecast` handles all request parameters and returns a `Forecast` object.
 
 ```python
 >>> from darksky import forecast
@@ -43,14 +43,16 @@ Using `time` argument will get you a **time machine call**.
 ```
 
 ### Data Points and Data Blocks
-The values are accessed using instance attributes. You can access current values directly, without going through `currently` data point.
+The values as well as `DataPoint` and `DataBlock` objects are accessed using instance attributes or dictionary keys. You can access current values directly, without going through `currently` data point.
 
 ```python
+>>> boston['currently']['temperature']
+60.72
 >>> boston.temperature
 60.72
 ```
 
-**Data blocks** are indexable and iterable by their data.
+**Data blocks** are indexable and iterable by their `data` values.
 
 ```python
 >>> len(boston.hourly)
@@ -64,12 +66,29 @@ The values are accessed using instance attributes. You can access current values
 [60.83, 59.49, 58.93, 57.95, 56.01, 53.95, 51.21, 49.21, 47.95, 46.31]
 ```
 
+Nonexistent attributes will raise `AttributeError` and dictionary keys `KeyError` the way you'd expect.
+
+### Raw data
+To get the raw data dictionary, you can either access it through instance attributes or navigate to it through dictionary keys, the same way you would navigate the actual dictionary.
+
+```python
+>>> boston.hourly[2]
+{'ozone': 290.06, 'temperature': 58.93, 'pressure': 1017.8, 'windBearing': 274, 'dewPoint': 52.58, 'cloudCover': 0.29, 'apparentTemperature': 58.93, 'windSpeed': 7.96, 'summary': 'Partly Cloudy', 'icon': 'partly-cloudy-night', 'humidity': 0.79, 'precipProbability': 0, 'precipIntensity': 0, 'visibility': 8.67, 'time': 1476410400}
+>>>
+>>> boston['hourly']['data'][2]
+{'ozone': 290.06, 'temperature': 58.93, 'pressure': 1017.8, 'windBearing': 274, 'dewPoint': 52.58, 'cloudCover': 0.29, 'apparentTemperature': 58.93, 'windSpeed': 7.96, 'summary': 'Partly Cloudy', 'icon': 'partly-cloudy-night', 'humidity': 0.79, 'precipProbability': 0, 'precipIntensity': 0, 'visibility': 8.67, 'time': 1476410400}
+```
+
+
 ### Flags and Alerts
-All dashes `-` in attribute names of **Flags** objects are replaced by underscores `_`. This doesn't affect the keys in raw data dictionary, but it's a necessary change in order to keep the functionality consistent throughout the library.
+All dashes `-` in attribute names of **Flags** objects are replaced by underscores `_`. This doesn't affect the dictionary keys.
 
 ```python
 >>> # instead of 'boston.flags.isd-stations'
 ... boston.flags.isd_stations
+['383340-99999', '383390-99999', '383410-99999', '384620-99999', '384710-99999']
+>>>
+>>> boston.flags['isd-stations']
 ['383340-99999', '383390-99999', '383410-99999', '384620-99999', '384710-99999']
 ```
 
@@ -78,14 +97,6 @@ Even though **Alerts** are represented by a list, the data accessibility through
 ```python
 >>> boston.alerts[0].title
 'Freeze Watch for Norfolk, MA'
-```
-
-### Raw data
-Use `rawdata` attribute:
-
-```python
->>> boston.hourly[2].rawdata
-{'ozone': 290.06, 'temperature': 58.93, 'pressure': 1017.8, 'windBearing': 274, 'dewPoint': 52.58, 'cloudCover': 0.29, 'apparentTemperature': 58.93, 'windSpeed': 7.96, 'summary': 'Partly Cloudy', 'icon': 'partly-cloudy-night', 'humidity': 0.79, 'precipProbability': 0, 'precipIntensity': 0, 'visibility': 8.67, 'time': 1476410400}
 ```
 
 ### Updating data

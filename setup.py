@@ -6,7 +6,7 @@ with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'pypi-readme.
     README = f.read()
 
 setup(name='darkskylib',
-      version='0.3.5',
+      version='0.3.6',
       description='The Dark Sky API wrapper',
       long_description=README,
       url='https://github.com/lukaskubis/darkskylib',

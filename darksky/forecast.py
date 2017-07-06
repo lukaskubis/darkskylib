@@ -10,6 +10,7 @@ from .data import DataPoint
 
 _API_URL = 'https://api.darksky.net/forecast'
 
+
 class Forecast(DataPoint):
     def __init__(self, key, latitude, longitude, time=None, **queries):
         self._parameters = dict(key=key, latitude=latitude, longitude=longitude, time=time)
@@ -33,8 +34,8 @@ class Forecast(DataPoint):
 
     def refresh(self, **queries):
         self._queries = queries
-        http_compression = {'Accept-Encoding':'gzip'}
-        request_params = {'params':self._queries, 'headers':http_compression}
+        http_compression = {'Accept-Encoding': 'gzip'}
+        request_params = {'params': self._queries, 'headers': http_compression}
 
         try:
             response = requests.get(self.url, **request_params)

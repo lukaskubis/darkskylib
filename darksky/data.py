@@ -1,5 +1,6 @@
 # data.py
 
+
 class DataPoint(object):
     def __init__(self, data):
         self._data = data
@@ -33,12 +34,6 @@ class DataPoint(object):
 
     def __getitem__(self, key):
         return self._data[key]
-
-    def __repr__(self):
-        return self._data
-
-    def __str__(self):
-        return str(self.__repr__())
 
     def __len__(self):
         return len(self._data)

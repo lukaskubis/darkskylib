@@ -1,7 +1,8 @@
 import os
 from setuptools import setup
 
-with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'README.md')) as f:
+# use pandoc to convert
+with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'readme.rst')) as f:
     README = f.read()
 
 setup(name='darkskylib',

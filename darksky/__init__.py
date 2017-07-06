@@ -1,7 +1,9 @@
 # __init__.py
 
+from contextlib import contextmanager
 from .forecast import Forecast
 
 
-def forecast(key, lat, lng, time=None, **queries):
-    return Forecast(key, lat, lng, time, **queries)
+@contextmanager
+def forecast(key, latitude, longitude, time=None, **queries):
+    yield Forecast(key, latitude, longitude, time, **queries)

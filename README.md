@@ -1,5 +1,5 @@
 # darkskylib
-[![GitHub release](https://img.shields.io/github/release/lukaskubis/darkskylib.svg)](https://github.com/lukaskubis/darkskylib/releases) [![PyPI](https://img.shields.io/pypi/v/darkskylib.svg)](https://pypi.python.org/pypi/darkskylib) [![PyPI](https://img.shields.io/pypi/status/darkskylib.svg)](https://pypi.python.org/pypi/darkskylib) [![python](https://img.shields.io/pypi/pyversions/darkskylib.svg)](https://pypi.python.org/pypi/darkskylib) [![GitHub license](https://img.shields.io/badge/license-MIT-lightgray.svg)](https://raw.githubusercontent.com/lukaskubis/darkskylib/master/LICENSE)
+[![GitHub release](https://img.shields.io/github/release/lukaskubis/darkskylib.svg)](https://github.com/lukaskubis/darkskylib/releases) [![PyPI](https://img.shields.io/pypi/v/darkskylib.svg)](https://pypi.org/project/darkskylib/) [![PyPI](https://img.shields.io/pypi/status/darkskylib.svg)](https://pypi.org/project/darkskylib/) [![python](https://img.shields.io/pypi/pyversions/darkskylib.svg)](https://pypi.org/project/darkskylib/) [![GitHub license](https://img.shields.io/badge/license-MIT-lightgray.svg)](https://raw.githubusercontent.com/lukaskubis/darkskylib/master/LICENSE)
 
 This Python library for the [Dark Sky API](https://darksky.net/dev/docs) provides access to detailed weather information from around the globe.
 

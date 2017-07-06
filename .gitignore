@@ -3,4 +3,4 @@
 dist
 build
 __pycache__
-readme.rst
+pypi-readme.rst

@@ -29,6 +29,7 @@ parameters for API call. The optional query parameters need to be
 provided as keyword arguments.
 
 Using ``time`` argument will get you a **time machine call**.
+Using ``timeout`` argument will set default `request timeout <http://docs.python-requests.org/en/master/api/#requests.request>`__ .
 
 .. code:: python
 
@@ -115,7 +116,7 @@ Use ``refresh()`` method to update data of a ``Forecast`` object. The
 ``refresh()`` method takes optional queries (including ``time``, making
 it a **Time machine** object) as keyword arguments. Calling
 ``refresh()`` without any arguments will set all queries to default
-values.
+values. Use ``timeout`` argument to set the request timeout.
 
 .. code:: python
 

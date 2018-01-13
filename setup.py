@@ -2,11 +2,11 @@ import os
 from setuptools import setup
 
 # use pandoc to convert
-with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'pypi-readme.rst')) as f:
+with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'README.rst')) as f:
     README = f.read()
 
 setup(name='darkskylib',
-      version='0.3.7',
+      version='0.3.8',
       description='The Dark Sky API wrapper',
       long_description=README,
       url='https://github.com/lukaskubis/darkskylib',

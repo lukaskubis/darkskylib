@@ -12,9 +12,9 @@ _API_URL = 'https://api.darksky.net/forecast'
 
 
 class Forecast(DataPoint):
-    def __init__(self, key, latitude, longitude, time=None, **queries):
+    def __init__(self, key, latitude, longitude, time=None, timeout=None, **queries):
         self._parameters = dict(key=key, latitude=latitude, longitude=longitude, time=time)
-        self.refresh(**queries)
+        self.refresh(timeout, **queries)
 
     def __setattr__(self, key, value):
         if key in ('_queries', '_parameters', '_data'):
@@ -39,21 +39,16 @@ class Forecast(DataPoint):
         uri_format = '{url}/{key}/{latitude},{longitude}{timestr}'
         return uri_format.format(url=_API_URL, timestr=timestr, **self._parameters)
 
-    def refresh(self, **queries):
+    def refresh(self, timeout=None, **queries):
         self._queries = queries
-        http_compression = {'Accept-Encoding': 'gzip'}
-        request_params = {'params': self._queries, 'headers': http_compression}
+        self.timeout = timeout
+        request_params = {
+            'params': self._queries,
+            'headers': {'Accept-Encoding': 'gzip'},
+            'timeout': timeout
+        }
 
-        try:
-            response = requests.get(self.url, **request_params)
-        except requests.exceptions.Timeout:
-            print('Error: Timeout')
-        except requests.exceptions.TooManyRedirects:
-            print('Error: TooManyRedirects')
-        except requests.exceptions.RequestException as ex:
-            print(ex)
-            sys.exit(1)
-
+        response = requests.get(self.url, **request_params)
         self.response_headers = response.headers
         if response.status_code is not 200:
             raise requests.exceptions.HTTPError('Bad response')

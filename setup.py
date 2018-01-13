@@ -6,7 +6,7 @@ with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'README.rst')
     README = f.read()
 
 setup(name='darkskylib',
-      version='0.3.8',
+      version='0.3.9',
       description='The Dark Sky API wrapper',
       long_description=README,
       url='https://github.com/lukaskubis/darkskylib',

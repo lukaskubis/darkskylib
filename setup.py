@@ -6,7 +6,7 @@ with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'pypi-readme.
     README = f.read()
 
 setup(name='darkskylib',
-      version='0.3.6',
+      version='0.3.7',
       description='The Dark Sky API wrapper',
       long_description=README,
       url='https://github.com/lukaskubis/darkskylib',
@@ -26,6 +26,7 @@ setup(name='darkskylib',
           'Programming Language :: Python :: 3.4',
           'Programming Language :: Python :: 3.5',
           'Programming Language :: Python :: 3.6',
+          'Programming Language :: Python :: 3.7',
           'Operating System :: OS Independent',
       ],
       keywords='darksky dark-sky dark sky forecast home weather home-weather weather-station',

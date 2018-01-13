@@ -26,11 +26,18 @@ class Forecast(DataPoint):
             return self.currently._data[key]
         return object.__getattribute__(self, key)
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, tb):
+        del self
+
     @property
     def url(self):
         time = self._parameters['time']
         timestr = ',{}'.format(time) if time else ''
-        return '{url}/{key}/{latitude},{longitude}{timestr}'.format(url=_API_URL, timestr=timestr, **self._parameters)
+        uri_format = '{url}/{key}/{latitude},{longitude}{timestr}'
+        return uri_format.format(url=_API_URL, timestr=timestr, **self._parameters)
 
     def refresh(self, **queries):
         self._queries = queries

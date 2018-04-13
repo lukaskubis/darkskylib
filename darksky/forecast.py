@@ -22,8 +22,10 @@ class Forecast(DataPoint):
         return super().__setattr__(key, value)
 
     def __getattr__(self, key):
-        if key in self.currently._data.keys():
-            return self.currently._data[key]
+        currently = object.__getattribute__(self, 'currently')
+        _data = object.__getattribute__(currently, '_data')
+        if key in _data.keys():
+            return _data[key]
         return object.__getattribute__(self, key)
 
     def __enter__(self):

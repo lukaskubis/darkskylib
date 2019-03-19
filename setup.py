@@ -35,5 +35,6 @@ setup(name='darkskylib',
           'future',
           'requests',
       ],
+      test_suite='test',
       zip_safe=True
       )
